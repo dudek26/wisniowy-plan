@@ -1,14 +1,14 @@
 * {
-  font-family: "Trebuchet MS", sans-serif;
+  font-family: "Poppins", "Trebuchet MS", sans-serif;
 }
 
 body {
-  background-image: "assets/background/pink.png";
+  background-image: url("assets/background/3.png");
+  background-attachment: fixed;
 }
 
 .header {
-  background-color: rgb(51, 51, 51);
-  color: white;
+  background-color: rgb(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   height: 55px;
@@ -19,7 +19,6 @@ body {
   font-size: 20px;
   cursor: pointer;
   font-weight: 500;
-  font-family: "Poppins";
   padding: 15px;
 }
 
@@ -32,7 +31,7 @@ body {
 .header-button-icon {
   width: 20px;
   height: 20px;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 .header-themes-button {
@@ -42,8 +41,62 @@ body {
   padding-right: 12px;
   border-radius: 25px;
   font-weight: 500;
-  font-family: "Poppins";
   cursor: pointer;
   font-size: 16px;
   margin-right: 20px;
+  transition-duration: 0.1s;
+}
+
+.header-themes-button:hover {
+  background-color: #00000070;
+}
+
+.cs {
+  background: #00000050;
+  justify-content: center;
+  text-align: center;
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 30px;
+  border-radius: 20px;
+}
+
+.cs-wp {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.cs-wp-title {
+  font-size: 50px;
+  font-weight: 500;
+}
+
+.cs-wp-description {
+  font-size: 20px;
+}
+
+.text-color {
+  color: azure;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 15px;
+  background-color: darkslategrey;
+  border: 0;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border: 0;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: azure;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: white;
+  border-radius: 6px;
 }

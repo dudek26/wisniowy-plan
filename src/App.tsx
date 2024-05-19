@@ -1,10 +1,12 @@
-import Header from "./components/Header";
+import Navbar from "./components/Navbar";
 import "./App.css";
+import ClassSelector from "./components/ClassSelector";
 
 function App() {
   return (
     <>
-      <Header />
+      <Navbar />
+      <ClassSelector />
     </>
   );
 }
