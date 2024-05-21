@@ -3,7 +3,7 @@
 }
 
 body {
-  background-image: url("assets/background/3.png");
+  background-image: url("assets/background/default.png");
   background-attachment: fixed;
 }
 
@@ -49,6 +49,18 @@ body {
 
 .header-themes-button:hover {
   background-color: #00000070;
+}
+
+.theme-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  transition-duration: 0.05s;
+}
+
+.theme-icon:hover {
+  outline: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
 }
 
 .cs {
@@ -99,4 +111,8 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: white;
   border-radius: 6px;
+}
+
+.dropdown-menu {
+  min-width: 10px !important;
 }

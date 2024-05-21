@@ -12,10 +12,16 @@ function Oddzialy(
   error: Error | null
 ) {
   if (isLoading) {
-    return <Dropdown.Item key={"loading"}>{"Ładowanie..."}</Dropdown.Item>;
+    return (
+      <Dropdown.Item key={"loading"}>{"Ładowanie oddziałów..."}</Dropdown.Item>
+    );
   }
   if (error) {
-    return <Dropdown.Item key={"error"}>{"Błąd."}</Dropdown.Item>;
+    return (
+      <Dropdown.Item key={"error"}>
+        {"Wystąpił błąd podczas"} <br /> {"ładowania listy oddziałów."}
+      </Dropdown.Item>
+    );
   }
   return oddzialy.map((oddzial) => (
     <Dropdown.Item key={oddzial} href={`/oddzial/${oddzial}`}>
@@ -53,7 +59,7 @@ function ClassSelector() {
 
       return (
         <div
-          //@ts-ignore
+          // @ts-ignore
           ref={ref}
           style={style}
           className={className}

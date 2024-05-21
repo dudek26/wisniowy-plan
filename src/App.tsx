@@ -4,10 +4,10 @@ import ClassSelector from "./components/ClassSelector";
 
 function App() {
   return (
-    <>
+    <div className="content">
       <Navbar />
       <ClassSelector />
-    </>
+    </div>
   );
 }
 
