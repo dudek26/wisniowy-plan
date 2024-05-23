@@ -3,8 +3,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Form from "react-bootstrap/Form";
 import { useQuery } from "@tanstack/react-query";
 
-const planURL = "https://planlekcji.staff.edu.pl/";
-const planLista = "lista.html";
+const apiURL = "http://localhost:3000/plany/";
 
 function Oddzialy(
   oddzialy: (string | null)[],
@@ -37,16 +36,21 @@ function ClassSelector() {
     error,
   } = useQuery({
     queryFn: () =>
-      fetch(planURL + planLista)
-        .then((res) => res.text())
-        .then((data) => {
-          let parser = new DOMParser();
-          let docPlanOddzialy = parser.parseFromString(data, "text/html");
-          let plans = docPlanOddzialy.querySelectorAll("ul").item(0).children;
+      // planURL + planLista
+      fetch(apiURL)
+        .then((res) => res.json())
+        .then((data: JSON) => {
           let list: (string | null)[] = [];
-          for (let plan of plans) {
-            list.push(plan.textContent);
-          }
+
+          // let parser = new DOMParser();
+          // let docPlanOddzialy = parser.parseFromString(data, "text/html");
+          // let plans = docPlanOddzialy.querySelectorAll("ul").item(0).children;
+
+          // for (let plan of plans) {
+          //   list.push(plan.textContent);
+          // }
+          //@ts-ignore
+          for (var i in data) list.push([data[i]]);
           return list;
         }),
     queryKey: ["oddzialy"],

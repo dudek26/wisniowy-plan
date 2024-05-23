@@ -1,118 +1,123 @@
 * {
-  font-family: "Poppins", "Trebuchet MS", sans-serif;
+	font-family: "Poppins", "Trebuchet MS", sans-serif;
 }
 
 body {
-  background-image: url("assets/background/default.png");
-  background-attachment: fixed;
+	background-image: url("assets/background/default.png");
+	background-attachment: fixed;
 }
 
 .header {
-  background-color: rgb(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  height: 55px;
-  justify-content: space-between;
+	background-color: rgb(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	height: 55px;
+	justify-content: space-between;
 }
 
 .header-logo {
-  font-size: 20px;
-  cursor: pointer;
-  font-weight: 500;
-  padding: 15px;
+	font-size: 20px;
+	cursor: pointer;
+	font-weight: 500;
+	padding: 15px;
 }
 
 .header-icon {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
+	width: 30px;
+	height: 30px;
+	margin-right: 10px;
 }
 
 .header-button-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
+	width: 20px;
+	height: 20px;
+	margin-right: 5px;
 }
 
 .header-themes-button {
-  background: #00000050;
-  padding: 8px;
-  padding-left: 12px;
-  padding-right: 12px;
-  border-radius: 25px;
-  font-weight: 500;
-  cursor: pointer;
-  font-size: 16px;
-  margin-right: 20px;
-  transition-duration: 0.1s;
+	background: #00000050;
+	padding: 8px;
+	padding-left: 12px;
+	padding-right: 12px;
+	border-radius: 25px;
+	font-weight: 500;
+	cursor: pointer;
+	font-size: 16px;
+	margin-right: 20px;
+	transition-duration: 0.1s;
 }
 
 .header-themes-button:hover {
-  background-color: #00000070;
+	background-color: #00000070;
 }
 
 .theme-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
-  transition-duration: 0.05s;
+	width: 30px;
+	height: 30px;
+	border-radius: 10px;
+	transition-duration: 0.05s;
 }
 
 .theme-icon:hover {
-  outline: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 5px;
+	outline: 2px solid rgba(255, 255, 255, 0.3);
+	border-radius: 5px;
 }
 
 .cs {
-  background: #00000050;
-  justify-content: center;
-  text-align: center;
-  margin-left: 5%;
-  margin-right: 5%;
-  margin-top: 30px;
-  border-radius: 20px;
+	background: #00000050;
+	justify-content: center;
+	text-align: center;
+	margin-left: 5%;
+	margin-right: 5%;
+	margin-top: 30px;
+	border-radius: 20px;
 }
 
 .cs-wp {
-  padding-top: 40px;
-  padding-bottom: 40px;
+	padding-top: 40px;
+	padding-bottom: 40px;
 }
 
 .cs-wp-title {
-  font-size: 50px;
-  font-weight: 500;
+	font-size: 50px;
+	font-weight: 500;
 }
 
 .cs-wp-description {
-  font-size: 20px;
+	font-size: 20px;
 }
 
 .text-color {
-  color: azure;
+	color: azure;
 }
 
 /* width */
 ::-webkit-scrollbar {
-  width: 15px;
-  background-color: darkslategrey;
-  border: 0;
+	width: 15px;
+	background-color: darkslategrey;
+	border: 0;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  border: 0;
+	border: 0;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: azure;
-  border-radius: 10px;
+	background: azure;
+	border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: white;
-  border-radius: 6px;
+	background: white;
+	border-radius: 6px;
 }
 
 .dropdown-menu {
-  min-width: 10px !important;
+	min-width: 10px !important;
+}
+
+.alert {
+	margin-right: 2%;
+	margin-left: 2%;
 }
