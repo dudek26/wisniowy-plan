@@ -48,7 +48,7 @@ body {
 }
 
 .header-themes-button:hover {
-	background-color: #00000070;
+	background-color: #000000;
 }
 
 .theme-icon {
@@ -64,7 +64,7 @@ body {
 }
 
 .cs {
-	background: #00000050;
+	background: #00000065;
 	justify-content: center;
 	text-align: center;
 	margin-left: 5%;
@@ -88,7 +88,7 @@ body {
 }
 
 .text-color {
-	color: azure;
+	color: white;
 }
 
 /* width */
@@ -120,4 +120,72 @@ body {
 .alert {
 	margin-right: 2%;
 	margin-left: 2%;
+}
+
+.plan-days {
+	display: flex;
+	margin-left: 5%;
+	margin-right: 5%;
+	justify-content: center;
+	text-align: center;
+}
+
+.plan {
+	background: #00000065;
+	justify-content: center;
+	text-align: center;
+	margin-top: 5px;
+	margin-left: 5px;
+	margin-bottom: 25px;
+	width: 100%;
+	height: 1000px;
+}
+.plan-title {
+	margin-left: 5%;
+	margin-right: 5%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.plan.hours {
+	border-bottom-left-radius: 20px;
+	margin-left: 0;
+	width: 60%;
+}
+
+.plan.friday {
+	border-bottom-right-radius: 20px;
+	margin-right: 0;
+}
+
+.plan-element {
+	border-top: 1px solid rgba(255, 255, 255, 0.2);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+	border-width: 1px;
+	margin-left: 10%;
+	margin-right: 10%;
+	height: 9%;
+	align-content: center;
+}
+
+.plan-element.first {
+	border-top: 0;
+}
+.plan-element.last {
+	border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+.plan-element.last-nb {
+	border-bottom: 0;
+}
+
+.plan-element.plan-element-title {
+	font-size: 18px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	height: 10%;
+	border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+	margin-left: 5%;
+	margin-right: 5%;
 }
