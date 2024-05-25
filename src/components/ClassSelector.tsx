@@ -5,33 +5,64 @@ import { useQuery } from "@tanstack/react-query";
 const apiURL = "https://wisniowy-plan-backend.onrender.com/";
 const planyURL = "plany/";
 
-function Oddzialy(
-	oddzialy: (string | null)[],
-	isLoading: boolean,
-	error: Error | null
-) {
-	if (isLoading) {
-		return (
-			<Dropdown.Item key={"loading"}>
-				{"Ładowanie oddziałów..."}
-			</Dropdown.Item>
-		);
-	}
-	if (error) {
-		return (
-			<Dropdown.Item key={"error"}>
-				{"Wystąpił błąd podczas"} <br /> {"ładowania listy oddziałów."}
-			</Dropdown.Item>
-		);
-	}
-	return oddzialy.map((oddzial) => (
-		<Dropdown.Item key={oddzial} href={`/oddzial/${oddzial}`}>
-			{oddzial}
-		</Dropdown.Item>
-	));
-}
+function ClassSelector({
+	//@ts-ignore
+	oddzial,
+	//@ts-ignore
+	grupaZaw,
+	//@ts-ignore
+	religia,
+	//@ts-ignore
+	etyka,
+	//@ts-ignore
+	grupaSpec,
+	//@ts-ignore
+	grupaAng,
+	//@ts-ignore
+	grupaJO2,
 
-function ClassSelector() {
+	//@ts-ignore
+	onOddzial,
+	//@ts-ignore
+	onGrupaZaw,
+	//@ts-ignore
+	onReligia,
+	//@ts-ignore
+	onEtyka,
+	//@ts-ignore
+	onGrupaSpec,
+	//@ts-ignore
+	onGrupaAng,
+	//@ts-ignore
+	onGrupaJO2,
+}) {
+	function Oddzialy(
+		oddzialy: string[],
+		isLoading: boolean,
+		error: Error | null
+	) {
+		if (isLoading) {
+			return (
+				<Dropdown.Item key={"loading"}>
+					{"Ładowanie oddziałów..."}
+				</Dropdown.Item>
+			);
+		}
+		if (error) {
+			return (
+				<Dropdown.Item key={"error"}>
+					{"Wystąpił błąd podczas"} <br />{" "}
+					{"ładowania listy oddziałów."}
+				</Dropdown.Item>
+			);
+		}
+		return oddzialy.map((oddzial) => (
+			<Dropdown.Item key={oddzial} onClick={onOddzial} id={oddzial}>
+				{oddzial}
+			</Dropdown.Item>
+		));
+	}
+
 	const {
 		data: oddzialy = [],
 		isLoading,
@@ -42,15 +73,7 @@ function ClassSelector() {
 			fetch(apiURL + planyURL)
 				.then((res) => res.json())
 				.then((data: JSON) => {
-					let list: (string | null)[] = [];
-
-					// let parser = new DOMParser();
-					// let docPlanOddzialy = parser.parseFromString(data, "text/html");
-					// let plans = docPlanOddzialy.querySelectorAll("ul").item(0).children;
-
-					// for (let plan of plans) {
-					//   list.push(plan.textContent);
-					// }
+					let list: string[] = [];
 					//@ts-ignore
 					for (var i in data) list.push([data[i]]);
 					return list;

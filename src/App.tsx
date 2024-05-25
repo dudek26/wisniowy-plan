@@ -1,16 +1,14 @@
 import Navbar from "./components/Header";
 import "./App.css";
-import ClassSelector from "./components/ClassSelector";
 import Warning from "./components/Warning";
-import Plan from "./components/Plan";
+import Body from "./components/Body";
 
 function App() {
 	return (
 		<div className="content">
 			<Navbar />
 			<Warning />
-			<ClassSelector />
-			<Plan />
+			<Body />
 		</div>
 	);
 }

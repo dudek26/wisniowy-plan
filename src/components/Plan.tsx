@@ -114,8 +114,23 @@ const nauczyciel = (lekcja: Lekcja, nauczyciele: Nauczyciel[][]) => {
 	return map;
 };
 
-function Plan() {
-	const oddzialy = fetchPlan("2tm1");
+function Plan({
+	//@ts-ignore
+	oddzial,
+	//@ts-ignore
+	grupaZaw,
+	//@ts-ignore
+	religia,
+	//@ts-ignore
+	etyka,
+	//@ts-ignore
+	grupaSpec,
+	//@ts-ignore
+	grupaAng,
+	//@ts-ignore
+	grupaJO2,
+}) {
+	const oddzialy = fetchPlan(oddzial);
 	const nauczyciele = fetchNauczyciele();
 
 	if (oddzialy.isLoading) return;
@@ -138,12 +153,10 @@ function Plan() {
 		}
 	});
 
-	console.log(days);
-
 	return (
-		<div>
+		<>
 			<div className="cs text-color plan-title">
-				{title("2tm1", oddzialy.isLoading, oddzialy.error)}
+				{title(oddzial, oddzialy.isLoading, oddzialy.error)}
 			</div>
 			<div className="plan-days text-color">
 				<div className={`plan hours h-${dzwonki.length}`}>
@@ -226,7 +239,7 @@ function Plan() {
 					);
 				})}
 			</div>
-		</div>
+		</>
 	);
 }
 
