@@ -1,9 +1,12 @@
 import ClassSelector from "./ClassSelector";
 import Plan from "./Plan";
 import { useState } from "react";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 function Body() {
-	const [oddzial, setOddzial] = useState("1la");
+	const [oddzial, setOddzial] = useState(cookies.get("oddzial"));
 	const [grupaZaw, setGrupaZaw] = useState(1);
 	const [religia, setReligia] = useState(true);
 	const [etyka, setEtyka] = useState(true);
@@ -14,6 +17,7 @@ function Body() {
 	//@ts-ignore
 	function handleOddzial(e) {
 		setOddzial(e.target.id);
+		cookies.set("oddzial", e.target.id, { path: "/" });
 	} //@ts-ignore
 	function handleGrupaZaw(e) {
 		setGrupaZaw(e.target.value);
