@@ -12,7 +12,7 @@ function Warning() {
 				</p>
 				<hr />
 				<p className="mb-0">
-					Jeśli chcesz pomóc w tworzeniu strony możesz to zrobić na{" "}
+					Jeśli chcesz pomóc w tworzeniu strony, możesz to zrobić na{" "}
 					<Alert.Link href="https://github.com/dudek26/wisniowy-plan">
 						GitHubie
 					</Alert.Link>

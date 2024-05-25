@@ -1,15 +1,19 @@
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
+import Cookies from "universal-cookie";
 
 import { useState, useEffect } from "react";
 
+const cookies = new Cookies();
+
 function Navbar() {
-	const [theme, setTheme] = useState(1);
+	const [theme, setTheme] = useState(cookies.get("theme"));
 	const click = (theme: React.SetStateAction<number>) => {
 		setTheme(theme);
 	};
 	useEffect(() => {
 		document.body.style.backgroundImage = `url(/background/${theme}.png)`;
+		cookies.set("theme", theme, { path: "/" });
 	}, [theme]);
 
 	let themeItems = [1, 2, 3, 4, 5, 6, 7, 8];

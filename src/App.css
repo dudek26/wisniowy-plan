@@ -8,7 +8,7 @@ body {
 }
 
 .header {
-	background-color: rgb(0, 0, 0, 0.6);
+	background-color: rgb(0, 0, 0, 0.8);
 	display: flex;
 	align-items: center;
 	height: 55px;
@@ -35,7 +35,7 @@ body {
 }
 
 .header-themes-button {
-	background: #00000050;
+	background: #ffffff15;
 	padding: 8px;
 	padding-left: 12px;
 	padding-right: 12px;
@@ -48,7 +48,7 @@ body {
 }
 
 .header-themes-button:hover {
-	background-color: #000000;
+	background-color: #ffffff35;
 }
 
 .theme-icon {
@@ -64,7 +64,7 @@ body {
 }
 
 .cs {
-	background: #00000065;
+	background: #00000070;
 	justify-content: center;
 	text-align: center;
 	margin-left: 5%;
@@ -131,15 +131,46 @@ body {
 }
 
 .plan {
-	background: #00000065;
+	background: #00000070;
 	justify-content: center;
 	text-align: center;
 	margin-top: 5px;
 	margin-left: 5px;
 	margin-bottom: 25px;
 	width: 100%;
-	height: 1000px;
+	height: 810px;
 }
+.plan.h-1 {
+	height: 135px;
+}
+.plan.h-2 {
+	height: 210px;
+}
+.plan.h-3 {
+	height: 285px;
+}
+.plan.h-4 {
+	height: 360px;
+}
+.plan.h-5 {
+	height: 435px;
+}
+.plan.h-6 {
+	height: 510px;
+}
+.plan.h-7 {
+	height: 585px;
+}
+.plan.h-8 {
+	height: 660px;
+}
+.plan.h-9 {
+	height: 735px;
+}
+.plan.h-10 {
+	height: 810px;
+}
+
 .plan-title {
 	margin-left: 5%;
 	margin-right: 5%;
@@ -147,12 +178,13 @@ body {
 	padding-bottom: 10px;
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
+	font-size: 18px;
 }
 
 .plan.hours {
 	border-bottom-left-radius: 20px;
 	margin-left: 0;
-	width: 60%;
+	width: 50%;
 }
 
 .plan.friday {
@@ -161,20 +193,55 @@ body {
 }
 
 .plan-element {
-	border-top: 1px solid rgba(255, 255, 255, 0.2);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-	border-width: 1px;
-	margin-left: 10%;
-	margin-right: 10%;
-	height: 9%;
+	border-top: 2px solid rgba(255, 255, 255, 0.2);
+	margin-left: 5%;
+	margin-right: 5%;
+	height: 75px;
+	display: flex;
+	align-content: end;
+	text-align: left;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	padding: 5px;
+	justify-content: space-between;
+	border-color: rgba(255, 255, 255, 0.2);
+	transition-duration: 0.05s;
+}
+
+.plan-element:hover {
+	background-color: #ffffff10;
+}
+.plan-element.empty:hover {
+	background: 0;
+}
+.plan-element.plan-element-title:hover {
+	background: 0;
+}
+.plan-element.time:hover {
+	background: 0;
+}
+
+.plan-element.dpn {
+	border-bottom-color: #ffffff75;
+}
+.plan-element.dpp {
+	border-top-color: #ffffff75;
+}
+
+.plan-element.time {
 	align-content: center;
+	text-align: center;
+	display: block;
+	justify-content: center;
 }
 
 .plan-element.first {
 	border-top: 0;
 }
 .plan-element.last {
-	border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+	border-bottom-style: solid;
+	height: 76px;
+	border-bottom-width: 2px;
 }
 .plan-element.last-nb {
 	border-bottom: 0;
@@ -182,10 +249,54 @@ body {
 
 .plan-element.plan-element-title {
 	font-size: 18px;
-	padding-top: 8px;
-	padding-bottom: 8px;
-	height: 10%;
+	padding-top: 10px;
+	padding-bottom: 5px;
+	height: 50px;
 	border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-	margin-left: 5%;
-	margin-right: 5%;
+	margin-left: 3%;
+	margin-right: 3%;
+	justify-content: center;
+	text-align: center;
+	font-weight: 500;
+}
+
+.plan-stc {
+	max-width: 80%;
+	margin-right: 10px;
+}
+
+.plan-subject {
+	font-size: 16px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	height: 70%;
+	display: -webkit-box;
+	max-width: 200px;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: reverse;
+	-webkit-box-align: end;
+	align-content: end;
+}
+
+.plan-teacher {
+	font-size: 14px;
+	font-weight: 300;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.plan-classroom {
+	font-size: 15px;
+	text-align: right;
+	position: -webkit-sticky;
+}
+
+.zastepstwo {
+	color: #ffc74f;
+}
+
+.odwolane {
+	color: indianred;
+	text-decoration: line-through;
 }
