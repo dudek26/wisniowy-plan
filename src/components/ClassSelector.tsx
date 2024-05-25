@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
-import Form from "react-bootstrap/Form";
+import { Dropdown, Form } from "react-bootstrap";
 import { useQuery } from "@tanstack/react-query";
 
 const apiURL = "https://wisniowy-plan-backend.onrender.com/";

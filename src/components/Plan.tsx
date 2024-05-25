@@ -1,4 +1,4 @@
-import Badge from "react-bootstrap/badge";
+import { Badge } from "react-bootstrap";
 import schoolData from "../data/data.json";
 import { useQuery } from "@tanstack/react-query";
 import Lekcja from "../utils/Lekcja";
