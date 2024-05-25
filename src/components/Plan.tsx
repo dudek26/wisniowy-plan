@@ -42,10 +42,6 @@ function dzwonkiLimit(lekcje: Lekcja[][]) {
 		dzwonki.push(i);
 	}
 
-	for (let element of document.getElementsByClassName("plan")) {
-		element.classList.add(`h-${dzwonki.length}`);
-	}
-
 	return dzwonki;
 }
 
@@ -89,7 +85,8 @@ const daysStr = ["monday", "tuesday", "wednesday", "thursday", "friday"];
 function Plan() {
 	const { lekcje, isLoading, error } = fetchPlan("2tm1");
 
-	if (isLoading || error) return;
+	if (isLoading) return;
+	if (error) return;
 
 	let dzwonki = dzwonkiLimit(lekcje);
 
@@ -116,7 +113,7 @@ function Plan() {
 				{title("2tm1", isLoading, error)}
 			</div>
 			<div className="plan-days text-color">
-				<div className="plan hours">
+				<div className={`plan hours h-${dzwonki.length}`}>
 					<div className="plan-element plan-element-title first">
 						Godzina
 					</div>
@@ -136,7 +133,10 @@ function Plan() {
 				{days.map((day, i) => {
 					return (
 						// @ts-ignore
-						<div className={`plan ${daysStr[i]}`} key={i}>
+						<div
+							className={`plan ${daysStr[i]} h-${dzwonki.length}`}
+							key={i}
+						>
 							<div className="plan-element plan-element-title first">
 								{
 									//@ts-ignore
