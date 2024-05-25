@@ -3,7 +3,6 @@ import schoolData from "../data/data.json";
 import { useState, useEffect } from "react";
 import Lekcja from "../utils/Lekcja";
 import Nauczyciel from "../utils/Nauczyciel";
-import Cookies from "universal-cookie";
 
 const apiURL = "https://wisniowy-plan-backend.onrender.com/";
 // const apiURL = "http://localhost:3000/";
