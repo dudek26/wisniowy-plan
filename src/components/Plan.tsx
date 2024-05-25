@@ -2,9 +2,11 @@ import Badge from "react-bootstrap/badge";
 import schoolData from "../data/data.json";
 import { useQuery } from "@tanstack/react-query";
 import Lekcja from "../utils/Lekcja";
+import Nauczyciel from "../utils/Nauczyciel";
 
 const apiURL = "https://wisniowy-plan-backend.onrender.com/";
 const planyURL = "plany/";
+const nauczycieleURL = "nauczyciele/";
 
 function godziny(godzina: number): string {
 	if (godzina < 1 || godzina > 10) return "";
@@ -33,6 +35,27 @@ function fetchPlan(klasa: string) {
 	});
 
 	return { lekcje, isLoading, error };
+}
+function fetchNauczyciele() {
+	const {
+		data: nauczyciele = [],
+		isLoading,
+		error,
+	} = useQuery({
+		queryFn: () =>
+			// planURL + planLista
+			fetch(apiURL + nauczycieleURL)
+				.then((res) => res.json())
+				.then((data: JSON) => {
+					let list: Nauczyciel[][] = [];
+					//@ts-ignore
+					for (var i in data) list.push([data[i]]);
+					return list;
+				}),
+		queryKey: ["nauczyciele"],
+	});
+
+	return { nauczyciele, isLoading, error };
 }
 
 function dzwonkiLimit(lekcje: Lekcja[][]) {
@@ -82,17 +105,27 @@ function grupa(lekcja: Lekcja) {
 
 const daysStr = ["monday", "tuesday", "wednesday", "thursday", "friday"];
 
+const nauczyciel = (lekcja: Lekcja, nauczyciele: Nauczyciel[][]) => {
+	if (lekcja.przedmiot == "") return "";
+	let map = nauczyciele.map((nauczyciel) => {
+		if (nauczyciel[0].inicjaly == lekcja.nauczyciel)
+			return nauczyciel[0].imie + ". " + nauczyciel[0].nazwisko;
+	});
+	return map;
+};
+
 function Plan() {
-	const { lekcje, isLoading, error } = fetchPlan("2tm1");
+	const oddzialy = fetchPlan("2tm1");
+	const nauczyciele = fetchNauczyciele();
 
-	if (isLoading) return;
-	if (error) return;
+	if (oddzialy.isLoading) return;
+	if (oddzialy.error) return;
 
-	let dzwonki = dzwonkiLimit(lekcje);
+	let dzwonki = dzwonkiLimit(oddzialy.lekcje);
 
 	let days: Lekcja[][] = [[], [], [], [], []];
 
-	lekcje.forEach((lekcja) => {
+	oddzialy.lekcje.forEach((lekcja) => {
 		if (lekcja == null || lekcja[0] == null || lekcja[0].grupa == "2/2")
 			return;
 
@@ -110,7 +143,7 @@ function Plan() {
 	return (
 		<div>
 			<div className="cs text-color plan-title">
-				{title("2tm1", isLoading, error)}
+				{title("2tm1", oddzialy.isLoading, oddzialy.error)}
 			</div>
 			<div className="plan-days text-color">
 				<div className={`plan hours h-${dzwonki.length}`}>
@@ -171,19 +204,10 @@ function Plan() {
 												}
 											</div>
 											<div className="plan-teacher">
-												{
-													//@ts-ignore
-													schoolData.nauczyciele[
-														lekcja.nauczyciel
-													]
-														? //@ts-ignore
-														  schoolData
-																.nauczyciele[
-																lekcja
-																	.nauczyciel
-														  ]
-														: lekcja.nauczyciel
-												}
+												{nauczyciel(
+													lekcja,
+													nauczyciele.nauczyciele
+												)}
 											</div>
 										</div>
 										<div className="plan-classroom">
