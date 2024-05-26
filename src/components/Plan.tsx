@@ -3,9 +3,9 @@ import schoolData from "../data/data.json";
 import { useState, useEffect } from "react";
 import Lekcja from "../utils/Lekcja";
 import Nauczyciel from "../utils/Nauczyciel";
+import PlanOddzialu from "../utils/Plan";
 
 const apiURL = "https://wisniowy-plan-backend.onrender.com/";
-// const apiURL = "http://localhost:3000/";
 const planyURL = "plany/";
 const nauczycieleURL = "nauczyciele/";
 
@@ -74,6 +74,27 @@ const nauczyciel = (lekcja: Lekcja, nauczyciele: Nauczyciel[][]) => {
 	return map;
 };
 
+function getPlan(plany: PlanOddzialu[], oddzial: string) {
+	if (plany.length < 1) {
+		console.log("No plans found");
+		return undefined;
+	}
+	let plan = undefined;
+	plany.forEach((p) => {
+		if (p.oddzial == oddzial) {
+			console.log(`Found plan for ${oddzial}`);
+			console.log(p.lekcje);
+			plan = p.lekcje;
+		}
+	});
+	if (!plan) {
+		console.log(`Plan for ${oddzial} not found.`);
+		return undefined;
+	}
+	console.log(plany);
+	return plan;
+}
+
 function Plan({
 	//@ts-ignore
 	oddzial,
@@ -91,20 +112,39 @@ function Plan({
 	grupaJO2,
 }) {
 	const [plan, setPlan] = useState([] as Lekcja[][]);
+	const [plany, setPlany] = useState([] as PlanOddzialu[]);
 	const [nauczyciele, setNauczyciele] = useState([] as Nauczyciel[][]);
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		setLoading(true);
-		fetch(apiURL + planyURL + oddzial)
-			.then((res) => res.json())
-			.then((data: JSON) => {
-				let list: Lekcja[][] = [];
-				//@ts-ignore
-				for (var i in data) list.push([data[i]]);
-				setPlan(list);
-				setLoading(false);
-			});
+		let newPlan = getPlan(plany, oddzial);
+		if (!newPlan) {
+			console.log(`Plan for ${oddzial} not found. Fetching...`);
+			fetch(apiURL + planyURL + oddzial)
+				.then((res) => res.json())
+				.then((data: JSON) => {
+					let list: Lekcja[][] = [];
+					//@ts-ignore
+					for (var i in data) list.push([data[i]]);
+					setPlan(list);
+					setLoading(false);
+
+					// If plan isn't saved, save it.
+					let hasPlan = false;
+					plany.forEach((p) => {
+						if (p.oddzial == oddzial) hasPlan = true;
+					});
+					if (!hasPlan) {
+						let newPlany = plany;
+						newPlany.push(new PlanOddzialu(oddzial, list));
+						setPlany(newPlany);
+					}
+				});
+		} else {
+			setPlan(newPlan);
+			setLoading(false);
+		}
 		fetch(apiURL + nauczycieleURL)
 			.then((res) => res.json())
 			.then((data: JSON) => {
