@@ -1,4 +1,4 @@
-import { Badge, Placeholder } from "react-bootstrap";
+import { Badge, Placeholder, OverlayTrigger, Card } from "react-bootstrap";
 import schoolData from "../data/data.json";
 import { useState, useEffect } from "react";
 import Lekcja from "../utils/Lekcja";
@@ -65,8 +65,32 @@ function grupa(lekcja: Lekcja) {
 
 const daysStr = ["monday", "tuesday", "wednesday", "thursday", "friday"];
 
-const nauczyciel = (lekcja: Lekcja, nauczyciele: Nauczyciel[][]) => {
+const nauczyciel = (
+	lekcja: Lekcja,
+	nauczyciele: Nauczyciel[][],
+	loading: boolean
+) => {
 	if (lekcja.przedmiot == "") return "";
+
+	if (loading) {
+		return (
+			<Placeholder as="div" animation="wave">
+				<Placeholder
+					style={{
+						width: randWidth(5),
+					}}
+					size="sm"
+				/>{" "}
+				<Placeholder
+					style={{
+						width: randWidth(80),
+					}}
+					size="sm"
+				/>
+			</Placeholder>
+		);
+	}
+
 	let map = nauczyciele.map((nauczyciel) => {
 		if (nauczyciel[0].inicjaly == lekcja.nauczyciel)
 			return nauczyciel[0].imie + ". " + nauczyciel[0].nazwisko;
@@ -74,24 +98,29 @@ const nauczyciel = (lekcja: Lekcja, nauczyciele: Nauczyciel[][]) => {
 	return map;
 };
 
+const fullPrzedmiot = (lekcja: Lekcja) => {
+	if (lekcja.przedmiot == "") return "";
+
+	//@ts-ignore
+	return schoolData.przedmioty[lekcja.przedmiot]
+		? //@ts-ignore
+		  schoolData.przedmioty[lekcja.przedmiot]
+		: lekcja.przedmiot;
+};
+
+function randWidth(base: number) {
+	return `${base + Math.random() * 30}px`;
+}
+
 function getPlan(plany: PlanOddzialu[], oddzial: string) {
-	if (plany.length < 1) {
-		console.log("No plans found");
-		return undefined;
-	}
+	if (plany.length < 1) return undefined;
+
 	let plan = undefined;
 	plany.forEach((p) => {
-		if (p.oddzial == oddzial) {
-			console.log(`Found plan for ${oddzial}`);
-			console.log(p.lekcje);
-			plan = p.lekcje;
-		}
+		if (p.oddzial == oddzial) plan = p.lekcje;
 	});
-	if (!plan) {
-		console.log(`Plan for ${oddzial} not found.`);
-		return undefined;
-	}
-	console.log(plany);
+	if (!plan) return undefined;
+
 	return plan;
 }
 
@@ -115,12 +144,12 @@ function Plan({
 	const [plany, setPlany] = useState([] as PlanOddzialu[]);
 	const [nauczyciele, setNauczyciele] = useState([] as Nauczyciel[][]);
 	const [loading, setLoading] = useState(false);
+	const [nLoading, setNLoading] = useState(false);
 
 	useEffect(() => {
 		setLoading(true);
 		let newPlan = getPlan(plany, oddzial);
 		if (!newPlan) {
-			console.log(`Plan for ${oddzial} not found. Fetching...`);
 			fetch(apiURL + planyURL + oddzial)
 				.then((res) => res.json())
 				.then((data: JSON) => {
@@ -145,6 +174,10 @@ function Plan({
 			setPlan(newPlan);
 			setLoading(false);
 		}
+	}, [oddzial]);
+
+	useEffect(() => {
+		setNLoading(true);
 		fetch(apiURL + nauczycieleURL)
 			.then((res) => res.json())
 			.then((data: JSON) => {
@@ -152,8 +185,9 @@ function Plan({
 				//@ts-ignore
 				for (var i in data) list.push([data[i]]);
 				setNauczyciele(list);
+				setNLoading(false);
 			});
-	}, [oddzial]);
+	}, ["once"]);
 
 	let days: Lekcja[][] = [[], [], [], [], []];
 
@@ -166,17 +200,84 @@ function Plan({
 
 	days.forEach((day, j) => {
 		for (let i = 0; i < day.length; i++) {
-			if (!day[i]) day[i] = new Lekcja(i + 1, j, "", "", "");
+			if (!day[i])
+				day[i] = new Lekcja(new Date(Date.now()), i + 1, j, "", "", "");
 		}
 	});
 
-	if (plan.length == 0) return;
+	if (plan.length == 0)
+		return (
+			<div className="cs text-color plan-title">
+				{title(oddzial, loading)}
+			</div>
+		);
 
 	let dzwonki = dzwonkiLimit(plan);
 
-	function randWidth(base: number) {
-		return `${base + Math.random() * 30}px`;
-	}
+	//@ts-ignore
+	const card = (lekcja: Lekcja) => {
+		const wyswGrupa = (lekcja: Lekcja) => {
+			if (
+				lekcja.grupa ||
+				lekcja.przedmiot == "religia" ||
+				lekcja.przedmiot == "etyka"
+			)
+				return (
+					<>
+						Grupa: <b>{grupa(lekcja)}</b>
+					</>
+				);
+			else return;
+		};
+		return (
+			<Card
+				style={{ maxWidth: "24rem" }}
+				bg="dark"
+				text="light"
+				border="light"
+			>
+				<Card.Body>
+					<Card.Title>
+						{lekcja.godzina}. {godziny(lekcja.godzina)}
+					</Card.Title>
+					<Card.Subtitle style={{ marginBottom: "5px" }}>
+						{fullPrzedmiot(lekcja)}
+					</Card.Subtitle>
+					<Card.Text>
+						Nauczyciel:{" "}
+						<b>{nauczyciel(lekcja, nauczyciele, nLoading)}</b>
+						<br />
+						Sala: <b>{sala(lekcja)}</b>
+						<br />
+						{wyswGrupa(lekcja)}
+					</Card.Text>
+				</Card.Body>
+			</Card>
+		);
+	};
+
+	const infoButton = (lekcja: Lekcja) => {
+		if (lekcja.przedmiot == "") return;
+		const placement = lekcja.dzien < 3 ? "right" : "left";
+		return (
+			<OverlayTrigger
+				placement={placement}
+				overlay={card(lekcja)}
+				delay={{ show: 200, hide: 0 }}
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					fill="currentColor"
+					className="bi bi-info-circle-fill plan-element-info"
+					viewBox="0 0 16 16"
+				>
+					<path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2" />
+				</svg>
+			</OverlayTrigger>
+		);
+	};
 
 	return (
 		<>
@@ -327,11 +428,12 @@ function Plan({
 											<div className="plan-teacher">
 												{nauczyciel(
 													lekcja,
-													nauczyciele
+													nauczyciele,
+													nLoading
 												)}
 											</div>
 										</div>
-										<div className="plan-classroom">
+										<div className="plan-element-right">
 											<Badge bg="secondary" pill>
 												{sala(lekcja)}
 											</Badge>
@@ -339,6 +441,8 @@ function Plan({
 											<Badge bg="primary" pill>
 												{grupa(lekcja)}
 											</Badge>
+											<br />
+											{infoButton(lekcja)}
 										</div>
 									</div>
 								);

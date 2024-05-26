@@ -6,7 +6,11 @@ import Cookies from "universal-cookie";
 const cookies = new Cookies();
 
 function Body() {
-	const [oddzial, setOddzial] = useState(cookies.get("oddzial"));
+	const defaultOddzial = cookies.get("oddzial")
+		? cookies.get("oddzial")
+		: "1la";
+
+	const [oddzial, setOddzial] = useState(defaultOddzial);
 	const [grupaZaw, setGrupaZaw] = useState(1);
 	const [religia, setReligia] = useState(true);
 	const [etyka, setEtyka] = useState(true);

@@ -7,7 +7,9 @@ import { useState, useEffect } from "react";
 const cookies = new Cookies();
 
 function Navbar() {
-	const [theme, setTheme] = useState(cookies.get("theme"));
+	const defTheme = cookies.get("theme") ? cookies.get("theme") : 1;
+
+	const [theme, setTheme] = useState(defTheme);
 	const click = (theme: React.SetStateAction<number>) => {
 		setTheme(theme);
 	};

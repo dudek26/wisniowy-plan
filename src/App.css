@@ -1,10 +1,11 @@
 * {
-	font-family: "Poppins", "Trebuchet MS", sans-serif;
+	font-family: "Poppins", sans-serif;
 }
 
 body {
 	background-image: url("assets/background/default.png");
 	background-attachment: fixed;
+	background-size: cover;
 }
 
 .header {
@@ -240,7 +241,7 @@ body {
 }
 .plan-element.last {
 	border-bottom-style: solid;
-	height: 76px;
+	height: 86px;
 	border-bottom-width: 2px;
 }
 .plan-element.last-nb {
@@ -286,10 +287,16 @@ body {
 	overflow: hidden;
 }
 
-.plan-classroom {
+.plan-element-right {
 	font-size: 15px;
 	text-align: right;
 	position: -webkit-sticky;
+	align-content: space-between;
+}
+
+.plan-element-info {
+	margin-top: 8px;
+	cursor: help;
 }
 
 .zastepstwo {

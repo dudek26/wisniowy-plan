@@ -1,4 +1,5 @@
 interface Lekcja {
+	data: Date;
 	godzina: number;
 	dzien: number;
 	przedmiot: string;
@@ -8,7 +9,8 @@ interface Lekcja {
 }
 
 class Lekcja {
-	constructor(godzina:number, dzien:number, przedmiot:string, nauczyciel:string, sala:string, grupa:(string|undefined) = undefined) {
+	constructor(data:Date, godzina:number, dzien:number, przedmiot:string, nauczyciel:string, sala:string, grupa:(string|undefined) = undefined) {
+		this.data = data;
 		this.godzina = godzina;
 		this.dzien = dzien;
 		this.przedmiot = przedmiot;
