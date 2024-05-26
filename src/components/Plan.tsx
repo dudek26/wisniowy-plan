@@ -124,6 +124,29 @@ function getPlan(plany: PlanOddzialu[], oddzial: string) {
 	return plan;
 }
 
+const daysOfTheWeek = [
+	"Niedziela",
+	"Poniedziałek",
+	"Wtorek",
+	"Środa",
+	"Czwartek",
+	"Piątek",
+	"Sobota",
+];
+
+const formatDate = (date: Date, includeDay: Boolean) => {
+	let day: string =
+		date.getDate() < 10 ? `0${date.getDate}` : date.getDate().toString();
+	let month: string =
+		date.getMonth() + 1 < 10
+			? `0${date.getMonth() + 1}`
+			: (date.getMonth() + 1).toString();
+	let year: string = date.getFullYear().toString();
+	let dotw = includeDay ? daysOfTheWeek[date.getDay()] + ", " : "";
+
+	return `${dotw}${day}.${month}.${year}`;
+};
+
 function Plan({
 	//@ts-ignore
 	oddzial,
@@ -224,6 +247,7 @@ function Plan({
 			)
 				return (
 					<>
+						<br />
 						Grupa: <b>{grupa(lekcja)}</b>
 					</>
 				);
@@ -234,7 +258,7 @@ function Plan({
 				style={{ maxWidth: "24rem" }}
 				bg="dark"
 				text="light"
-				border="light"
+				border="secondary"
 			>
 				<Card.Body>
 					<Card.Title>
@@ -248,9 +272,13 @@ function Plan({
 						<b>{nauczyciel(lekcja, nauczyciele, nLoading)}</b>
 						<br />
 						Sala: <b>{sala(lekcja)}</b>
-						<br />
 						{wyswGrupa(lekcja)}
+						<br />
+						Brak danych o zastępstwach.
 					</Card.Text>
+					<Card.Footer>
+						<small>{formatDate(new Date(Date.now()), true)}</small>
+					</Card.Footer>
 				</Card.Body>
 			</Card>
 		);
