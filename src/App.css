@@ -139,37 +139,37 @@ body {
 	margin-left: 5px;
 	margin-bottom: 25px;
 	width: 100%;
-	height: 910px;
+	height: 940px;
 }
 .plan.h-1 {
-	height: 145px;
+	height: 175px;
 }
 .plan.h-2 {
-	height: 230px;
+	height: 260px;
 }
 .plan.h-3 {
-	height: 315px;
+	height: 345px;
 }
 .plan.h-4 {
-	height: 400px;
+	height: 430px;
 }
 .plan.h-5 {
-	height: 485px;
+	height: 515px;
 }
 .plan.h-6 {
-	height: 570px;
+	height: 600px;
 }
 .plan.h-7 {
-	height: 655px;
+	height: 685px;
 }
 .plan.h-8 {
-	height: 740px;
+	height: 770px;
 }
 .plan.h-9 {
-	height: 825px;
+	height: 855px;
 }
 .plan.h-10 {
-	height: 910px;
+	height: 940px;
 }
 
 .plan-title {
@@ -251,14 +251,20 @@ body {
 .plan-element.plan-element-title {
 	font-size: 18px;
 	padding-top: 10px;
-	padding-bottom: 5px;
-	height: 50px;
+	padding-bottom: 10px;
+	height: 80px;
 	border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 	margin-left: 3%;
 	margin-right: 3%;
 	justify-content: center;
 	text-align: center;
+	align-content: center;
 	font-weight: 500;
+	display: block;
+}
+
+.plan-date {
+	font-weight: 400;
 }
 
 .plan-stc {

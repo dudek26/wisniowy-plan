@@ -3,10 +3,12 @@ import schoolData from "../data/data.json";
 import { useState, useEffect } from "react";
 import Lekcja from "../utils/Lekcja";
 import Nauczyciel from "../utils/Nauczyciel";
+import Zastepstwo from "../utils/Zastepstwo";
 import PlanOddzialu from "../utils/Plan";
 
 const apiURL = "https://wisniowy-plan-backend.onrender.com/";
 const planyURL = "plany/";
+const zastepstwaURL = "zastepstwa/";
 const nauczycieleURL = "nauczyciele/";
 
 function godziny(godzina: number): string {
@@ -147,6 +149,15 @@ const formatDate = (date: Date, includeDay: Boolean) => {
 	return `${dotw}${day}.${month}.${year}`;
 };
 
+function addDays(date: Date, number: number) {
+	date.setDate(date.getDate() + number);
+	return date;
+}
+
+const getDayFromMonday = (day: number) => {
+	return day == 0 ? 6 : day - 1;
+};
+
 function Plan({
 	//@ts-ignore
 	oddzial,
@@ -166,6 +177,9 @@ function Plan({
 	const [plan, setPlan] = useState([] as Lekcja[][]);
 	const [plany, setPlany] = useState([] as PlanOddzialu[]);
 	const [nauczyciele, setNauczyciele] = useState([] as Nauczyciel[][]);
+	const [zastepstwa, setZastepstwa] = useState([] as Zastepstwo[][]);
+	const [zastepstwaDaty, setZastepstwaDaty] = useState([] as Date[]);
+	const [weekStart, setWeekStart] = useState(new Date());
 	const [loading, setLoading] = useState(false);
 	const [nLoading, setNLoading] = useState(false);
 
@@ -210,6 +224,31 @@ function Plan({
 				setNauczyciele(list);
 				setNLoading(false);
 			});
+
+		fetch(apiURL + zastepstwaURL)
+			.then((res) => res.json())
+			.then((data: JSON) => {
+				let list: Zastepstwo[][] = [];
+				//@ts-ignore
+				for (var i in data) list.push([data[i]]);
+				setZastepstwa(list);
+				let list2: Date[] = [];
+				list[0].forEach((z) => {
+					if (!zastepstwaDaty.includes(z.data)) list2.push(z.data);
+				});
+				setZastepstwaDaty(list2);
+			});
+
+		const startDate = new Date();
+		startDate.setMilliseconds(0);
+		startDate.setSeconds(0);
+		startDate.setMinutes(0);
+		startDate.setHours(0);
+		startDate.setDate(
+			startDate.getDate() - getDayFromMonday(startDate.getDay())
+		);
+		if (getDayFromMonday(startDate.getDay()) > 4) addDays(startDate, 7);
+		setWeekStart(startDate);
 	}, ["once"]);
 
 	let days: Lekcja[][] = [[], [], [], [], []];
@@ -223,8 +262,16 @@ function Plan({
 
 	days.forEach((day, j) => {
 		for (let i = 0; i < day.length; i++) {
-			if (!day[i])
-				day[i] = new Lekcja(new Date(Date.now()), i + 1, j, "", "", "");
+			if (!day[i]) {
+				day[i] = new Lekcja(
+					addDays(new Date(weekStart), j),
+					i + 1,
+					j,
+					"",
+					"",
+					""
+				);
+			}
 		}
 	});
 
@@ -277,7 +324,12 @@ function Plan({
 						Brak danych o zastępstwach.
 					</Card.Text>
 					<Card.Footer>
-						<small>{formatDate(new Date(Date.now()), true)}</small>
+						<small>
+							{formatDate(
+								addDays(new Date(weekStart), lekcja.dzien),
+								true
+							)}
+						</small>
 					</Card.Footer>
 				</Card.Body>
 			</Card>
@@ -342,6 +394,13 @@ function Plan({
 									//@ts-ignore
 									schoolData.dni[daysStr[i]]
 								}
+								<br />
+								<span className="plan-date">
+									{formatDate(
+										addDays(new Date(weekStart), i),
+										false
+									)}
+								</span>
 							</div>
 							{day.map((lekcja: Lekcja, i) => {
 								i++;
