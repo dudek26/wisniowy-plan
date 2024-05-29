@@ -48,8 +48,12 @@ function title(oddzial: string, isLoading: boolean, isZLoading: boolean) {
 	);
 }
 
-function sala(lekcja: Lekcja) {
-	if (lekcja.przedmiot == "wf")
+function sala(lekcja: Lekcja, zastepstwoOverride: boolean = false) {
+	const przedmiot =
+		zastepstwoOverride && lekcja.zastepstwo?.zastepstwo
+			? lekcja.zastepstwo.przedmiot
+			: lekcja.przedmiot;
+	if (przedmiot == "wf")
 		return (
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +67,10 @@ function sala(lekcja: Lekcja) {
 				<path d="M6.25 11.745v-1.418l1.204 1.375.261.524a.8.8 0 0 1-.12.231l-2.5 3.25a.75.75 0 1 1-1.19-.914zm4.22-4.215-.494-.494.205-1.843.006-.067 1.124 1.124h1.44a.75.75 0 0 1 0 1.5H11a.75.75 0 0 1-.531-.22Z" />
 			</svg>
 		);
-	else return lekcja.sala;
+	else
+		return zastepstwoOverride && lekcja.zastepstwo?.zastepstwo
+			? lekcja.zastepstwo.sala
+			: lekcja.sala;
 }
 function grupa(lekcja: Lekcja) {
 	if (lekcja.przedmiot == "religia") return <b> ✝ </b>;
@@ -76,7 +83,8 @@ const daysStr = ["monday", "tuesday", "wednesday", "thursday", "friday"];
 const nauczyciel = (
 	lekcja: Lekcja,
 	nauczyciele: Nauczyciel[][],
-	loading: boolean
+	loading: boolean,
+	zastepstwoOverride: boolean | undefined = false
 ) => {
 	if (lekcja.przedmiot == "") return "";
 
@@ -99,6 +107,9 @@ const nauczyciel = (
 		);
 	}
 
+	if (zastepstwoOverride && lekcja.zastepstwo?.zastepstwo)
+		return lekcja.zastepstwo.zastepca;
+
 	let map = nauczyciele.map((nauczyciel) => {
 		if (nauczyciel[0].inicjaly == lekcja.nauczyciel)
 			return nauczyciel[0].imie + ". " + nauczyciel[0].nazwisko;
@@ -106,11 +117,11 @@ const nauczyciel = (
 	return map;
 };
 
-const fullPrzedmiot = (
-	lekcja: Lekcja,
-	override: String | undefined = undefined
-) => {
-	let przedmiot = override ? override : lekcja.przedmiot;
+const fullPrzedmiot = (lekcja: Lekcja, zastepstwoOverride: boolean = false) => {
+	let przedmiot =
+		zastepstwoOverride && lekcja.zastepstwo?.zastepstwo
+			? lekcja.zastepstwo.przedmiot
+			: lekcja.przedmiot;
 	if (przedmiot == "") return "";
 
 	//@ts-ignore
@@ -463,7 +474,7 @@ function Plan({
 				przedmiotText = (
 					<>
 						<s>{fullPrzedmiot(lekcja)}</s>{" "}
-						<b>{fullPrzedmiot(lekcja, zaste.przedmiot)}</b>
+						<b>{fullPrzedmiot(lekcja, true)}</b>
 					</>
 				);
 			} else if (!zaste.zastepstwo)
@@ -579,6 +590,10 @@ function Plan({
 								if (i == dzwonki.length)
 									classname += " last-nb";
 								else if (i == day.length) classname += " last";
+								if (lekcja.zastepstwo?.zastepstwo)
+									classname += " zastepstwo";
+								else if (lekcja.zastepstwo)
+									classname += " odwolane";
 
 								if (loading)
 									return (
@@ -667,23 +682,14 @@ function Plan({
 									<div className={classname} key={i}>
 										<div className="plan-stc">
 											<div className="plan-subject">
-												{
-													//@ts-ignore
-													schoolData.przedmioty[
-														lekcja.przedmiot
-													]
-														? //@ts-ignore
-														  schoolData.przedmioty[
-																lekcja.przedmiot
-														  ]
-														: lekcja.przedmiot
-												}
+												{fullPrzedmiot(lekcja, true)}
 											</div>
 											<div className="plan-teacher">
 												{nauczyciel(
 													lekcja,
 													nauczyciele,
-													nLoading
+													nLoading,
+													true
 												)}
 											</div>
 										</div>

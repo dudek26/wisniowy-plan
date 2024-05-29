@@ -291,6 +291,13 @@ body {
 	font-weight: 300;
 	text-overflow: ellipsis;
 	overflow: hidden;
+	display: -webkit-box;
+	max-width: 200px;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: reverse;
+	-webkit-box-align: end;
+	align-content: end;
 }
 
 .plan-element-right {
