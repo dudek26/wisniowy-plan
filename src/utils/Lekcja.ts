@@ -1,15 +1,27 @@
+import Zastepstwo from "./Zastepstwo";
+
 interface Lekcja {
 	data: Date;
 	godzina: number;
 	dzien: number;
 	przedmiot: string;
-	grupa: (string|undefined);
+	grupa: string | undefined;
 	nauczyciel: string;
 	sala: string;
+	zastepstwo: Zastepstwo | undefined;
 }
 
 class Lekcja {
-	constructor(data:Date, godzina:number, dzien:number, przedmiot:string, nauczyciel:string, sala:string, grupa:(string|undefined) = undefined) {
+	constructor(
+		data: Date,
+		godzina: number,
+		dzien: number,
+		przedmiot: string,
+		nauczyciel: string,
+		sala: string,
+		zastepstwo: Zastepstwo | undefined = undefined,
+		grupa: string | undefined = undefined
+	) {
 		this.data = data;
 		this.godzina = godzina;
 		this.dzien = dzien;
@@ -17,7 +29,8 @@ class Lekcja {
 		this.grupa = grupa;
 		this.nauczyciel = nauczyciel;
 		this.sala = sala;
+		this.zastepstwo = zastepstwo;
 	}
 }
 
-export default Lekcja
+export default Lekcja;

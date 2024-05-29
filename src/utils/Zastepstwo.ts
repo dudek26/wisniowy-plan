@@ -1,28 +1,28 @@
 interface Zastepstwo {
-	zastepstwo:boolean,
-	data:Date,
-	godzina:number,
-	nauczyciel:string,
-	klasa:string,
-	przedmiot:(string|undefined),
-	zastepca:(string|undefined),
-	sala:(string|undefined),
-	uwagi:(string|undefined),
-	grupa:(string|undefined)
+	zastepstwo: boolean;
+	data: number;
+	godzina: number;
+	nauczyciel: string;
+	klasa: string;
+	przedmiot: string | undefined;
+	zastepca: string | undefined;
+	sala: string | undefined;
+	uwagi: string | undefined;
+	grupa: string | undefined;
 }
 
 class Zastepstwo {
 	constructor(
-		zastepstwo:boolean,
-		data:Date,
-		godzina:number,
-		nauczyciel:string,
-		klasa:string,
-		przedmiot:(string|undefined) = undefined,
-		zastepca:(string|undefined) = undefined,
-		sala:(string|undefined) = undefined,
-		uwagi:(string|undefined) = undefined,
-		grupa:(string|undefined) = undefined
+		zastepstwo: boolean,
+		data: number,
+		godzina: number,
+		nauczyciel: string,
+		klasa: string,
+		przedmiot: string | undefined = undefined,
+		zastepca: string | undefined = undefined,
+		sala: string | undefined = undefined,
+		uwagi: string | undefined = undefined,
+		grupa: string | undefined = undefined
 	) {
 		this.zastepstwo = zastepstwo;
 		this.data = data;
@@ -37,4 +37,4 @@ class Zastepstwo {
 	}
 }
 
-export default Zastepstwo
+export default Zastepstwo;

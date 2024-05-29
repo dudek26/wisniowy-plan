@@ -28,11 +28,17 @@ function dzwonkiLimit(lekcje: Lekcja[][]) {
 	return dzwonki;
 }
 
-function title(oddzial: string, isLoading: boolean) {
+function title(oddzial: string, isLoading: boolean, isZLoading: boolean) {
 	if (isLoading)
 		return (
 			<>
 				Ładowanie planu lekcji dla oddziału <b>{oddzial}</b>...
+			</>
+		);
+	if (isZLoading)
+		return (
+			<>
+				Ładowanie zastępstw dla oddziału <b>{oddzial}</b>...
 			</>
 		);
 	return (
@@ -100,14 +106,18 @@ const nauczyciel = (
 	return map;
 };
 
-const fullPrzedmiot = (lekcja: Lekcja) => {
-	if (lekcja.przedmiot == "") return "";
+const fullPrzedmiot = (
+	lekcja: Lekcja,
+	override: String | undefined = undefined
+) => {
+	let przedmiot = override ? override : lekcja.przedmiot;
+	if (przedmiot == "") return "";
 
 	//@ts-ignore
-	return schoolData.przedmioty[lekcja.przedmiot]
+	return schoolData.przedmioty[przedmiot]
 		? //@ts-ignore
-		  schoolData.przedmioty[lekcja.przedmiot]
-		: lekcja.przedmiot;
+		  schoolData.przedmioty[przedmiot]
+		: przedmiot;
 };
 
 function randWidth(base: number) {
@@ -178,10 +188,11 @@ function Plan({
 	const [plany, setPlany] = useState([] as PlanOddzialu[]);
 	const [nauczyciele, setNauczyciele] = useState([] as Nauczyciel[][]);
 	const [zastepstwa, setZastepstwa] = useState([] as Zastepstwo[][]);
-	const [zastepstwaDaty, setZastepstwaDaty] = useState([] as Date[]);
+	const [zastepstwaDaty, setZastepstwaDaty] = useState([] as number[]);
 	const [weekStart, setWeekStart] = useState(new Date());
 	const [loading, setLoading] = useState(false);
 	const [nLoading, setNLoading] = useState(false);
+	const [zLoading, setZLoading] = useState(false);
 
 	useEffect(() => {
 		setLoading(true);
@@ -215,6 +226,7 @@ function Plan({
 
 	useEffect(() => {
 		setNLoading(true);
+		setZLoading(true);
 		fetch(apiURL + nauczycieleURL)
 			.then((res) => res.json())
 			.then((data: JSON) => {
@@ -232,11 +244,12 @@ function Plan({
 				//@ts-ignore
 				for (var i in data) list.push([data[i]]);
 				setZastepstwa(list);
-				let list2: Date[] = [];
+				let list2: number[] = [];
 				list[0].forEach((z) => {
 					if (!zastepstwaDaty.includes(z.data)) list2.push(z.data);
 				});
 				setZastepstwaDaty(list2);
+				setZLoading(false);
 			});
 
 		const startDate = new Date();
@@ -253,11 +266,78 @@ function Plan({
 
 	let days: Lekcja[][] = [[], [], [], [], []];
 
+	const hasZastepstwaData = (lekcja: Lekcja) => {
+		let has = false;
+		zastepstwaDaty.forEach((d) => {
+			const tempDate = new Date(d);
+			if (
+				tempDate.getDate() == lekcja.data.getDate() &&
+				tempDate.getMonth() == lekcja.data.getMonth() &&
+				tempDate.getFullYear() == lekcja.data.getFullYear()
+			) {
+				has = true;
+			}
+		});
+		return has;
+	};
+
+	function getZastepstwo(
+		lekcja: Lekcja,
+		grupa: string | undefined
+	): Zastepstwo | undefined {
+		if (lekcja.nauczyciel.startsWith("#")) return;
+
+		if (!hasZastepstwaData(lekcja)) return;
+
+		let zast;
+		zastepstwa.forEach((z) => {
+			const tempData = new Date(z[0].data);
+			if (
+				grupa &&
+				tempData.getDate() == lekcja.data.getDate() &&
+				tempData.getMonth() == lekcja.data.getMonth() &&
+				tempData.getFullYear() == lekcja.data.getFullYear() &&
+				z[0].godzina == lekcja.godzina &&
+				z[0].klasa == oddzial &&
+				z[0].grupa == grupa.charAt(0)
+			)
+				zast = z[0];
+			else if (
+				tempData.getDate() == lekcja.data.getDate() &&
+				tempData.getMonth() == lekcja.data.getMonth() &&
+				tempData.getFullYear() == lekcja.data.getFullYear() &&
+				z[0].klasa == oddzial &&
+				z[0].godzina == lekcja.godzina
+			)
+				zast = z[0];
+		});
+		console.log(zast);
+		return zast;
+	}
+
 	plan.forEach((lekcja) => {
 		if (lekcja == null || lekcja[0] == null || lekcja[0].grupa == "2/2")
 			return;
 
-		days[lekcja[0].dzien][lekcja[0].godzina - 1] = lekcja[0];
+		let placeholder = new Lekcja(
+			addDays(new Date(weekStart), lekcja[0].dzien),
+			lekcja[0].godzina,
+			lekcja[0].dzien,
+			lekcja[0].przedmiot,
+			lekcja[0].nauczyciel,
+			lekcja[0].sala
+		);
+
+		days[lekcja[0].dzien][lekcja[0].godzina - 1] = new Lekcja(
+			placeholder.data,
+			placeholder.godzina,
+			placeholder.dzien,
+			placeholder.przedmiot,
+			placeholder.nauczyciel,
+			placeholder.sala,
+			getZastepstwo(placeholder, lekcja[0].grupa),
+			lekcja[0].grupa
+		);
 	});
 
 	days.forEach((day, j) => {
@@ -275,10 +355,10 @@ function Plan({
 		}
 	});
 
-	if (plan.length == 0)
+	if (plan.length == 0 || zLoading)
 		return (
 			<div className="cs text-color plan-title">
-				{title(oddzial, loading)}
+				{title(oddzial, loading, zLoading)}
 			</div>
 		);
 
@@ -286,7 +366,7 @@ function Plan({
 
 	//@ts-ignore
 	const card = (lekcja: Lekcja) => {
-		const wyswGrupa = (lekcja: Lekcja) => {
+		const wyswGrupa = () => {
 			if (
 				lekcja.grupa ||
 				lekcja.przedmiot == "religia" ||
@@ -300,36 +380,123 @@ function Plan({
 				);
 			else return;
 		};
+
+		const uwagi = () => {
+			if (lekcja.nauczyciel.startsWith("#")) return;
+			if (!hasZastepstwaData(lekcja))
+				return (
+					<>
+						<br />
+						Brak danych o zastępstwach.
+					</>
+				);
+			if (!getZastepstwo(lekcja, lekcja.grupa))
+				return (
+					<>
+						<br />
+						Brak zaplanowanych zastępstw.
+					</>
+				);
+
+			if (!getZastepstwo(lekcja, lekcja.grupa)?.zastepstwo)
+				return (
+					<>
+						<br />
+						<b>Lekcja odwołana.</b>
+					</>
+				);
+
+			if (getZastepstwo(lekcja, lekcja.grupa)?.uwagi)
+				return (
+					<>
+						<br />
+						Uwagi:
+						<b>{getZastepstwo(lekcja, lekcja.grupa)?.uwagi}</b>
+					</>
+				);
+			return;
+		};
+
+		const zaste = getZastepstwo(lekcja, lekcja.grupa);
+
+		let textColor = "light";
+		if (zaste) {
+			//@ts-ignore
+			if (getZastepstwo(lekcja, lekcja.grupa).zastepstwo)
+				textColor = "warning";
+			else textColor = "danger";
+		}
+
+		let borderColor = "secondary";
+		if (hasZastepstwaData(lekcja)) {
+			if (zaste) {
+				//@ts-ignore
+				if (zaste.zastepstwo) borderColor = "warning";
+				else borderColor = "danger";
+			} else borderColor = "light";
+		}
+
+		let nauczycielText = <b>{nauczyciel(lekcja, nauczyciele, nLoading)}</b>;
+		let salaText = <b>{sala(lekcja)}</b>;
+		let przedmiotText = fullPrzedmiot(lekcja);
+		if (zaste) {
+			if (zaste.zastepca)
+				nauczycielText = (
+					<>
+						<s>{nauczyciel(lekcja, nauczyciele, nLoading)}</s>{" "}
+						<b>{zaste.zastepca}</b>
+					</>
+				);
+			else
+				nauczycielText = (
+					<s>{nauczyciel(lekcja, nauczyciele, nLoading)}</s>
+				);
+
+			if (lekcja.sala != zaste.sala)
+				salaText = (
+					<>
+						<s>{sala(lekcja)}</s> <b>{zaste.sala}</b>
+					</>
+				);
+
+			if (zaste.zastepstwo && lekcja.przedmiot != zaste.przedmiot) {
+				przedmiotText = (
+					<>
+						<s>{fullPrzedmiot(lekcja)}</s>{" "}
+						<b>{fullPrzedmiot(lekcja, zaste.przedmiot)}</b>
+					</>
+				);
+			} else if (!zaste.zastepstwo)
+				przedmiotText = (
+					<>
+						<s>{fullPrzedmiot(lekcja)}</s>
+					</>
+				);
+		}
+
 		return (
 			<Card
 				style={{ maxWidth: "24rem" }}
 				bg="dark"
-				text="light"
-				border="secondary"
+				text={textColor}
+				border={borderColor}
 			>
 				<Card.Body>
 					<Card.Title>
 						{lekcja.godzina}. {godziny(lekcja.godzina)}
 					</Card.Title>
 					<Card.Subtitle style={{ marginBottom: "5px" }}>
-						{fullPrzedmiot(lekcja)}
+						{przedmiotText}
 					</Card.Subtitle>
 					<Card.Text>
-						Nauczyciel:{" "}
-						<b>{nauczyciel(lekcja, nauczyciele, nLoading)}</b>
+						Nauczyciel: {nauczycielText}
 						<br />
-						Sala: <b>{sala(lekcja)}</b>
-						{wyswGrupa(lekcja)}
-						<br />
-						Brak danych o zastępstwach.
+						Sala: {salaText}
+						{wyswGrupa()}
+						{uwagi()}
 					</Card.Text>
 					<Card.Footer>
-						<small>
-							{formatDate(
-								addDays(new Date(weekStart), lekcja.dzien),
-								true
-							)}
-						</small>
+						<small>{formatDate(lekcja.data, true)}</small>
 					</Card.Footer>
 				</Card.Body>
 			</Card>
@@ -362,7 +529,7 @@ function Plan({
 	return (
 		<>
 			<div className="cs text-color plan-title">
-				{title(oddzial, loading)}
+				{title(oddzial, loading, zLoading)}
 			</div>
 			<div className="plan-days text-color">
 				<div className={`plan hours h-${dzwonki.length}`}>
