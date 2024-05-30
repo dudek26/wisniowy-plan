@@ -660,12 +660,14 @@ function Plan({
 	}
 
 	function nextDay() {
-		setSelectedDay(addDays(new Date(selectedDay), 1, true));
-		if (selectedDay.getDay() == 1) nextWeek();
+		const date = new Date(selectedDay);
+		if (date.getDay() == 5) nextWeek();
+		setSelectedDay(addDays(new Date(date), 1, true));
 	}
 	function prevDay() {
-		setSelectedDay(addDays(new Date(selectedDay), -1, true));
-		if (selectedDay.getDay() == 5) prevWeek();
+		const date = new Date(selectedDay);
+		if (date.getDay() == 1) prevWeek();
+		setSelectedDay(addDays(new Date(date), -1, true));
 	}
 
 	const mobileVersion = (
