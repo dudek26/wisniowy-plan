@@ -21,7 +21,10 @@ function Body() {
 	//@ts-ignore
 	function handleOddzial(e) {
 		setOddzial(e.target.id);
-		cookies.set("oddzial", e.target.id, { path: "/" });
+		cookies.set("oddzial", e.target.id, {
+			path: "/",
+			expires: new Date(new Date().getTime() + 1000 * 3600 * 24 * 365),
+		});
 	} //@ts-ignore
 	function handleGrupaZaw(e) {
 		setGrupaZaw(e.target.value);

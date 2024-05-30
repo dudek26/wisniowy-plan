@@ -28,24 +28,39 @@ function dzwonkiLimit(lekcje: Lekcja[][]) {
 	return dzwonki;
 }
 
-function title(oddzial: string, isLoading: boolean, isZLoading: boolean) {
-	if (isLoading)
+function title(
+	oddzial: string,
+	isLoading: boolean,
+	isZLoading: boolean,
+	mobile: boolean = false
+) {
+	if (!mobile) {
+		if (isLoading)
+			return (
+				<>
+					Ładowanie planu lekcji dla oddziału <b>{oddzial}</b>...
+				</>
+			);
+		if (isZLoading)
+			return (
+				<>
+					Ładowanie zastępstw dla oddziału <b>{oddzial}</b>...
+				</>
+			);
 		return (
 			<>
-				Ładowanie planu lekcji dla oddziału <b>{oddzial}</b>...
+				Plan lekcji dla oddziału <b>{oddzial}</b>
 			</>
 		);
-	if (isZLoading)
+	} else {
+		if (isLoading) return <>Ładowanie planu lekcji...</>;
+		if (isZLoading) return <>Ładowanie zastępstw...</>;
 		return (
 			<>
-				Ładowanie zastępstw dla oddziału <b>{oddzial}</b>...
+				Plan lekcji <b>{oddzial}</b>
 			</>
 		);
-	return (
-		<>
-			Plan lekcji dla oddziału <b>{oddzial}</b>
-		</>
-	);
+	}
 }
 
 function sala(lekcja: Lekcja, zastepstwoOverride: boolean = false) {
@@ -170,13 +185,28 @@ const formatDate = (date: Date, includeDay: Boolean) => {
 	return `${dotw}${day}.${month}.${year}`;
 };
 
-function addDays(date: Date, number: number) {
+function addDays(date: Date, number: number, skipWeekends: boolean = false) {
 	date.setDate(date.getDate() + number);
+	if (skipWeekends) {
+		while (getDayFromMonday(date.getDay()) > 4) {
+			number > 0
+				? date.setDate(date.getDate() + 1)
+				: date.setDate(date.getDate() - 1);
+		}
+	}
 	return date;
 }
 
 const getDayFromMonday = (day: number) => {
 	return day == 0 ? 6 : day - 1;
+};
+
+const skipWeekend = (date: Date) => {
+	const ndate = new Date(date);
+	if (getDayFromMonday(ndate.getDay()) > 4) {
+		ndate.setDate(ndate.getDate() + 2);
+	}
+	return ndate;
 };
 
 function Plan({
@@ -204,6 +234,28 @@ function Plan({
 	const [loading, setLoading] = useState(false);
 	const [nLoading, setNLoading] = useState(false);
 	const [zLoading, setZLoading] = useState(false);
+	const [selectedDay, setSelectedDay] = useState(
+		skipWeekend(
+			new Date(
+				new Date().getFullYear(),
+				new Date().getMonth(),
+				new Date().getDate()
+			)
+		)
+	);
+	const [width, setWidth] = useState<number>(window.innerWidth);
+
+	function handleWindowSizeChange() {
+		setWidth(window.innerWidth);
+	}
+	useEffect(() => {
+		window.addEventListener("resize", handleWindowSizeChange);
+		return () => {
+			window.removeEventListener("resize", handleWindowSizeChange);
+		};
+	}, []);
+
+	const isMobile = width <= 768;
 
 	useEffect(() => {
 		setLoading(true);
@@ -410,12 +462,27 @@ function Plan({
 		days = newDays;
 	}, [weekStart]);
 
-	if (plan.length == 0 || zLoading)
-		return (
-			<div className="cs text-color plan-title">
-				{title(oddzial, loading, zLoading)}
+	const placeholderPC = (
+		<div className="text-color plan-title">
+			<div className="plan-title-arrow left">{"<"}</div>
+			<div className="plan-title-el">
+				{title(oddzial, loading, zLoading, isMobile)}
 			</div>
-		);
+			<div className="plan-title-arrow right">{">"}</div>
+		</div>
+	);
+	const placeholderMobile = (
+		<div className="text-color plan-title">
+			<div className="plan-title-arrow left">{"<"}</div>
+			<div className="plan-title-el">
+				{title(oddzial, loading, zLoading, isMobile)}
+			</div>
+			<div className="plan-title-arrow right">{">"}</div>
+		</div>
+	);
+
+	if (plan.length == 0 || zLoading)
+		return isMobile ? placeholderMobile : placeholderPC;
 
 	let dzwonki = dzwonkiLimit(plan);
 
@@ -558,11 +625,15 @@ function Plan({
 		);
 	};
 
-	const infoButton = (lekcja: Lekcja) => {
+	const infoButton = (lekcja: Lekcja, onMobile: boolean = false) => {
 		if (lekcja.przedmiot == "") return;
-		const placement = lekcja.dzien < 3 ? "right" : "left";
+
+		let placement = "left";
+		if (lekcja.dzien < 3 && !onMobile) placement = "right";
+
 		return (
 			<OverlayTrigger
+				//@ts-ignore
 				placement={placement}
 				overlay={card(lekcja)}
 				delay={{ show: 200, hide: 0 }}
@@ -588,14 +659,213 @@ function Plan({
 		setWeekStart(addDays(new Date(weekStart), -7));
 	}
 
-	return (
+	function nextDay() {
+		setSelectedDay(addDays(new Date(selectedDay), 1, true));
+		if (selectedDay.getDay() == 1) nextWeek();
+	}
+	function prevDay() {
+		setSelectedDay(addDays(new Date(selectedDay), -1, true));
+		if (selectedDay.getDay() == 5) prevWeek();
+	}
+
+	const mobileVersion = (
+		<>
+			<div className="text-color plan-title">
+				<div className="plan-title-arrow left" onClick={prevDay}>
+					{"<"}
+				</div>
+				<div className="plan-title-el">
+					{title(oddzial, loading, zLoading, isMobile)}
+				</div>
+				<div className="plan-title-arrow right" onClick={nextDay}>
+					{">"}
+				</div>
+			</div>
+			<div className="plan-days text-color">
+				<div className={`plan hours h-${dzwonki.length}`}>
+					<div className="plan-element plan-element-title first">
+						Godzina
+					</div>
+					{dzwonki.map((i) => {
+						let classname = "plan-element time";
+						if (i == 1) classname += " first";
+						if (i == 4 || i == 5) classname += " dpn";
+						if (i == 5 || i == 6) classname += " dpp";
+						if (i == dzwonki.length) classname += " last-nb";
+						return (
+							<div className={classname} key={i}>
+								{i}: {godziny(i)}
+							</div>
+						);
+					})}
+				</div>
+				{
+					// @ts-ignore
+					<div
+						className={`plan friday h-${dzwonki.length}`}
+						key={selectedDay.getDay()}
+					>
+						<div className="plan-element plan-element-title first">
+							{
+								//@ts-ignore
+								schoolData.dni[
+									daysStr[
+										getDayFromMonday(selectedDay.getDay())
+									]
+								]
+							}
+							<br />
+							<span className="plan-date">
+								{formatDate(selectedDay, false)}
+							</span>
+						</div>
+						{days[getDayFromMonday(selectedDay.getDay())].map(
+							(lekcja: Lekcja, i) => {
+								lekcja.setDate(selectedDay);
+								const day =
+									days[
+										getDayFromMonday(selectedDay.getDay())
+									];
+								i++;
+								let classname = "plan-element";
+								if (!lekcja.przedmiot) classname += " empty";
+								if (i == 1) classname += " first";
+								if (i == 4 || i == 5) classname += " dpn";
+								if (i == 5 || i == 6) classname += " dpp";
+								if (i == dzwonki.length)
+									classname += " last-nb";
+								else if (i == day.length) classname += " last";
+								if (lekcja.zastepstwo?.zastepstwo)
+									classname += " zastepstwo";
+								else if (lekcja.zastepstwo)
+									classname += " odwolane";
+
+								if (loading)
+									return (
+										<div className={classname} key={i}>
+											<div className="plan-stc">
+												<div className="plan-subject">
+													<Placeholder
+														as="div"
+														animation="wave"
+													>
+														<Placeholder
+															style={{
+																width: randWidth(
+																	140
+																),
+															}}
+														/>{" "}
+														<Placeholder
+															style={{
+																width: randWidth(
+																	70
+																),
+															}}
+														/>
+													</Placeholder>
+												</div>
+												<div className="plan-teacher">
+													<Placeholder
+														as="div"
+														animation="wave"
+													>
+														<Placeholder
+															style={{
+																width: randWidth(
+																	5
+																),
+															}}
+															size="sm"
+														/>{" "}
+														<Placeholder
+															style={{
+																width: randWidth(
+																	80
+																),
+															}}
+															size="sm"
+														/>
+													</Placeholder>
+												</div>
+											</div>
+											<div className="plan-classroom">
+												<Badge bg="secondary" pill>
+													<Placeholder
+														as="div"
+														animation="wave"
+													>
+														<Placeholder
+															style={{
+																width: randWidth(
+																	1
+																),
+															}}
+															size="xs"
+														/>{" "}
+													</Placeholder>
+												</Badge>
+												<br />
+												<Badge bg="primary" pill>
+													<Placeholder
+														as="div"
+														animation="wave"
+													>
+														<Placeholder
+															style={{
+																width: "20px",
+															}}
+															size="xs"
+														/>{" "}
+													</Placeholder>
+												</Badge>
+											</div>
+										</div>
+									);
+
+								return (
+									<div className={classname} key={i}>
+										<div className="plan-stc">
+											<div className="plan-subject">
+												{fullPrzedmiot(lekcja, true)}
+											</div>
+											<div className="plan-teacher">
+												{nauczyciel(
+													lekcja,
+													nauczyciele,
+													nLoading,
+													true
+												)}
+											</div>
+										</div>
+										<div className="plan-element-right">
+											<Badge bg="secondary" pill>
+												{sala(lekcja)}
+											</Badge>
+											<br />
+											<Badge bg="primary" pill>
+												{grupa(lekcja)}
+											</Badge>
+											<br />
+											{infoButton(lekcja, true)}
+										</div>
+									</div>
+								);
+							}
+						)}
+					</div>
+				}
+			</div>
+		</>
+	);
+	const pcVersion = (
 		<>
 			<div className="text-color plan-title">
 				<div className="plan-title-arrow left" onClick={prevWeek}>
 					{"<"}
 				</div>
 				<div className="plan-title-el">
-					{title(oddzial, loading, zLoading)}
+					{title(oddzial, loading, zLoading, isMobile)}
 				</div>
 				<div className="plan-title-arrow right" onClick={nextWeek}>
 					{">"}
@@ -772,6 +1042,8 @@ function Plan({
 			</div>
 		</>
 	);
+
+	return isMobile ? mobileVersion : pcVersion;
 }
 
 export default Plan;

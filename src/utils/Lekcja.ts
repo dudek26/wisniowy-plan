@@ -31,6 +31,10 @@ class Lekcja {
 		this.sala = sala;
 		this.zastepstwo = zastepstwo;
 	}
+
+	public setDate(date: Date) {
+		this.data = date;
+	}
 }
 
 export default Lekcja;

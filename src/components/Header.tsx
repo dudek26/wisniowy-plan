@@ -15,7 +15,10 @@ function Navbar() {
 	};
 	useEffect(() => {
 		document.body.style.backgroundImage = `url(/background/${theme}.png)`;
-		cookies.set("theme", theme, { path: "/" });
+		cookies.set("theme", theme, {
+			path: "/",
+			expires: new Date(new Date().getTime() + 1000 * 3600 * 24 * 365),
+		});
 	}, [theme]);
 
 	let themeItems = [1, 2, 3, 4, 5, 6, 7, 8];

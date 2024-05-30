@@ -175,6 +175,7 @@ body {
 .plan-title {
 	margin-left: 5%;
 	margin-right: 5%;
+	margin-top: 10px;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	border-bottom-left-radius: 0;
@@ -324,7 +325,7 @@ body {
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 	margin-bottom: -10px;
-	border: 2px solid rgba(255, 255, 255, 0.2);
+	border: 2px solid rgba(255, 255, 255, 0);
 	cursor: pointer;
 	transition-duration: 0.1s;
 }
