@@ -172,6 +172,37 @@ body {
 	height: 940px;
 }
 
+.plan.h-1.mobile {
+	height: 190px;
+}
+.plan.h-2.mobile {
+	height: 290px;
+}
+.plan.h-3.mobile {
+	height: 390px;
+}
+.plan.h-4.mobile {
+	height: 490px;
+}
+.plan.h-5.mobile {
+	height: 590px;
+}
+.plan.h-6.mobile {
+	height: 690px;
+}
+.plan.h-7.mobile {
+	height: 790px;
+}
+.plan.h-8.mobile {
+	height: 890px;
+}
+.plan.h-9.mobile {
+	height: 990px;
+}
+.plan.h-10.mobile {
+	height: 1090px;
+}
+
 .plan-title {
 	margin-left: 5%;
 	margin-right: 5%;
@@ -195,6 +226,13 @@ body {
 	margin-right: 0;
 }
 
+.plan.mobile {
+	border-bottom-left-radius: 20px;
+	border-bottom-right-radius: 20px;
+	margin-left: 0;
+	margin-right: 0;
+}
+
 .plan-element {
 	border-top: 2px solid rgba(255, 255, 255, 0.2);
 	margin-left: 5%;
@@ -209,6 +247,10 @@ body {
 	justify-content: space-between;
 	border-color: rgba(255, 255, 255, 0.2);
 	transition-duration: 0.05s;
+}
+
+.plan-element.mobile {
+	height: 100px;
 }
 
 .plan-element:hover {
@@ -246,6 +288,9 @@ body {
 	height: 86px;
 	border-bottom-width: 2px;
 }
+.plan-element.last.mobile {
+	height: 101px;
+}
 .plan-element.last-nb {
 	border-bottom: 0;
 }
@@ -274,11 +319,17 @@ body {
 	margin-right: 10px;
 }
 
+.plan-mobile-godzina {
+	color: lightgray;
+	font-weight: 300;
+	font-size: 14px;
+}
+
 .plan-subject {
 	font-size: 16px;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	height: 70%;
+	height: 50px;
 	display: -webkit-box;
 	max-width: 200px;
 	-webkit-line-clamp: 2;
@@ -286,6 +337,11 @@ body {
 	-webkit-box-direction: reverse;
 	-webkit-box-align: end;
 	align-content: end;
+}
+.plan-subject.mobile {
+	font-size: 16px;
+	max-width: 350px;
+	height: 45px;
 }
 
 .plan-teacher {
@@ -300,6 +356,7 @@ body {
 	-webkit-box-direction: reverse;
 	-webkit-box-align: end;
 	align-content: end;
+	margin-top: 5px;
 }
 
 .plan-title-el {

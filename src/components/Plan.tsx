@@ -255,7 +255,8 @@ function Plan({
 		};
 	}, []);
 
-	const isMobile = width <= 768;
+	// const isMobile = width <= 768;
+	const isMobile = width <= 1173;
 
 	useEffect(() => {
 		setLoading(true);
@@ -328,6 +329,7 @@ function Plan({
 	}, ["once"]);
 
 	let days: Lekcja[][] = [[], [], [], [], []];
+	let daysMobile: Lekcja[][] = [[], [], [], [], []];
 
 	const hasZastepstwaData = (lekcja: Lekcja) => {
 		let has = false;
@@ -400,6 +402,8 @@ function Plan({
 			getZastepstwo(placeholder, lekcja[0].grupa),
 			lekcja[0].grupa
 		);
+		daysMobile[lekcja[0].dzien][lekcja[0].godzina - 1] =
+			days[lekcja[0].dzien][lekcja[0].godzina - 1];
 	});
 
 	days.forEach((day, j) => {
@@ -415,6 +419,10 @@ function Plan({
 				);
 			}
 		}
+	});
+
+	daysMobile.forEach((day) => {
+		if (!day[0]) day.shift();
 	});
 
 	useEffect(() => {
@@ -684,30 +692,16 @@ function Plan({
 				</div>
 			</div>
 			<div className="plan-days text-color">
-				<div className={`plan hours h-${dzwonki.length}`}>
-					<div className="plan-element plan-element-title first">
-						Godzina
-					</div>
-					{dzwonki.map((i) => {
-						let classname = "plan-element time";
-						if (i == 1) classname += " first";
-						if (i == 4 || i == 5) classname += " dpn";
-						if (i == 5 || i == 6) classname += " dpp";
-						if (i == dzwonki.length) classname += " last-nb";
-						return (
-							<div className={classname} key={i}>
-								{i}: {godziny(i)}
-							</div>
-						);
-					})}
-				</div>
 				{
 					// @ts-ignore
 					<div
-						className={`plan friday h-${dzwonki.length}`}
+						className={`plan mobile h-${
+							daysMobile[getDayFromMonday(selectedDay.getDay())]
+								.length
+						}`}
 						key={selectedDay.getDay()}
 					>
-						<div className="plan-element plan-element-title first">
+						<div className="plan-element mobile plan-element-title first">
 							{
 								//@ts-ignore
 								schoolData.dni[
@@ -721,22 +715,22 @@ function Plan({
 								{formatDate(selectedDay, false)}
 							</span>
 						</div>
-						{days[getDayFromMonday(selectedDay.getDay())].map(
+						{daysMobile[getDayFromMonday(selectedDay.getDay())].map(
 							(lekcja: Lekcja, i) => {
+								if (lekcja.przedmiot == "") return;
+
 								lekcja.setDate(selectedDay);
 								const day =
 									days[
 										getDayFromMonday(selectedDay.getDay())
 									];
 								i++;
-								let classname = "plan-element";
+								let classname = "plan-element mobile";
 								if (!lekcja.przedmiot) classname += " empty";
 								if (i == 1) classname += " first";
 								if (i == 4 || i == 5) classname += " dpn";
 								if (i == 5 || i == 6) classname += " dpp";
-								if (i == dzwonki.length)
-									classname += " last-nb";
-								else if (i == day.length) classname += " last";
+								if (i == day.length) classname += " last-nb";
 								if (lekcja.zastepstwo?.zastepstwo)
 									classname += " zastepstwo";
 								else if (lekcja.zastepstwo)
@@ -746,7 +740,10 @@ function Plan({
 									return (
 										<div className={classname} key={i}>
 											<div className="plan-stc">
-												<div className="plan-subject">
+												<div className="plan-mobile-godzina">
+													{i}: {godziny(i)}
+												</div>
+												<div className="plan-subject mobile">
 													<Placeholder
 														as="div"
 														animation="wave"
@@ -767,7 +764,7 @@ function Plan({
 														/>
 													</Placeholder>
 												</div>
-												<div className="plan-teacher">
+												<div className="plan-teacher mobile">
 													<Placeholder
 														as="div"
 														animation="wave"
@@ -828,10 +825,14 @@ function Plan({
 								return (
 									<div className={classname} key={i}>
 										<div className="plan-stc">
-											<div className="plan-subject">
+											<div className="plan-mobile-godzina">
+												{lekcja.godzina}:{" "}
+												{godziny(lekcja.godzina)}
+											</div>
+											<div className="plan-subject mobile">
 												{fullPrzedmiot(lekcja, true)}
 											</div>
-											<div className="plan-teacher">
+											<div className="plan-teacher mobile">
 												{nauczyciel(
 													lekcja,
 													nauczyciele,
