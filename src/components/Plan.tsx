@@ -159,7 +159,7 @@ const daysOfTheWeek = [
 
 const formatDate = (date: Date, includeDay: Boolean) => {
 	let day: string =
-		date.getDate() < 10 ? `0${date.getDate}` : date.getDate().toString();
+		date.getDate() < 10 ? `0${date.getDate()}` : date.getDate().toString();
 	let month: string =
 		date.getMonth() + 1 < 10
 			? `0${date.getMonth() + 1}`
@@ -322,7 +322,6 @@ function Plan({
 			)
 				zast = z[0];
 		});
-		console.log(zast);
 		return zast;
 	}
 
@@ -365,6 +364,51 @@ function Plan({
 			}
 		}
 	});
+
+	useEffect(() => {
+		let newDays: Lekcja[][] | undefined = [[], [], [], [], []];
+
+		plan.forEach((lekcja) => {
+			if (lekcja == null || lekcja[0] == null || lekcja[0].grupa == "2/2")
+				return;
+
+			let placeholder = new Lekcja(
+				addDays(new Date(weekStart), lekcja[0].dzien),
+				lekcja[0].godzina,
+				lekcja[0].dzien,
+				lekcja[0].przedmiot,
+				lekcja[0].nauczyciel,
+				lekcja[0].sala
+			);
+
+			newDays[lekcja[0].dzien][lekcja[0].godzina - 1] = new Lekcja(
+				placeholder.data,
+				placeholder.godzina,
+				placeholder.dzien,
+				placeholder.przedmiot,
+				placeholder.nauczyciel,
+				placeholder.sala,
+				getZastepstwo(placeholder, lekcja[0].grupa),
+				lekcja[0].grupa
+			);
+		});
+
+		newDays.forEach((day, j) => {
+			for (let i = 0; i < day.length; i++) {
+				if (!day[i]) {
+					day[i] = new Lekcja(
+						addDays(new Date(weekStart), j),
+						i + 1,
+						j,
+						"",
+						"",
+						""
+					);
+				}
+			}
+		});
+		days = newDays;
+	}, [weekStart]);
 
 	if (plan.length == 0 || zLoading)
 		return (
@@ -421,7 +465,7 @@ function Plan({
 				return (
 					<>
 						<br />
-						Uwagi:
+						Uwagi:{" "}
 						<b>{getZastepstwo(lekcja, lekcja.grupa)?.uwagi}</b>
 					</>
 				);
@@ -537,10 +581,25 @@ function Plan({
 		);
 	};
 
+	function nextWeek() {
+		setWeekStart(addDays(new Date(weekStart), 7));
+	}
+	function prevWeek() {
+		setWeekStart(addDays(new Date(weekStart), -7));
+	}
+
 	return (
 		<>
-			<div className="cs text-color plan-title">
-				{title(oddzial, loading, zLoading)}
+			<div className="text-color plan-title">
+				<div className="plan-title-arrow left" onClick={prevWeek}>
+					{"<"}
+				</div>
+				<div className="plan-title-el">
+					{title(oddzial, loading, zLoading)}
+				</div>
+				<div className="plan-title-arrow right" onClick={nextWeek}>
+					{">"}
+				</div>
 			</div>
 			<div className="plan-days text-color">
 				<div className={`plan hours h-${dzwonki.length}`}>

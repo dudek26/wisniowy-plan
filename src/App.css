@@ -180,6 +180,7 @@ body {
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 	font-size: 18px;
+	display: flex;
 }
 
 .plan.hours {
@@ -298,6 +299,47 @@ body {
 	-webkit-box-direction: reverse;
 	-webkit-box-align: end;
 	align-content: end;
+}
+
+.plan-title-el {
+	background: #00000070;
+	justify-content: center;
+	text-align: center;
+	margin: 0;
+	padding: 8px;
+	/* border-radius: 20px; */
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	margin-bottom: -10px;
+	width: 80%;
+}
+
+.plan-title-arrow {
+	background: #00000070;
+	justify-content: center;
+	text-align: center;
+	margin: 0;
+	padding: 8px;
+	width: 12%;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	margin-bottom: -10px;
+	border: 2px solid rgba(255, 255, 255, 0.2);
+	cursor: pointer;
+	transition-duration: 0.1s;
+}
+
+.plan-title-arrow:hover {
+	border-color: rgba(255, 255, 255, 0.4);
+}
+
+.plan-title-arrow.left {
+	border-top-left-radius: 20px;
+	margin-right: 5px;
+}
+.plan-title-arrow.right {
+	border-top-right-radius: 20px;
+	margin-left: 5px;
 }
 
 .plan-element-right {
