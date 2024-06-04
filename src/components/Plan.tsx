@@ -65,7 +65,9 @@ function title(
 
 function sala(lekcja: Lekcja, zastepstwoOverride: boolean = false) {
 	const przedmiot =
-		zastepstwoOverride && lekcja.zastepstwo?.zastepstwo
+		zastepstwoOverride &&
+		lekcja.zastepstwo?.zastepstwo &&
+		(lekcja.zastepstwo?.grupa == lekcja.grupa || !lekcja.grupa)
 			? lekcja.zastepstwo.przedmiot
 			: lekcja.przedmiot;
 	if (przedmiot == "wf")
@@ -122,7 +124,11 @@ const nauczyciel = (
 		);
 	}
 
-	if (zastepstwoOverride && lekcja.zastepstwo?.zastepstwo)
+	if (
+		zastepstwoOverride &&
+		lekcja.zastepstwo?.zastepstwo &&
+		(lekcja.zastepstwo?.grupa == lekcja.grupa || !lekcja.grupa)
+	)
 		return lekcja.zastepstwo.zastepca;
 
 	let map = nauczyciele.map((nauczyciel) => {
@@ -134,7 +140,9 @@ const nauczyciel = (
 
 const fullPrzedmiot = (lekcja: Lekcja, zastepstwoOverride: boolean = false) => {
 	let przedmiot =
-		zastepstwoOverride && lekcja.zastepstwo?.zastepstwo
+		zastepstwoOverride &&
+		lekcja.zastepstwo?.zastepstwo &&
+		(lekcja.zastepstwo?.grupa == lekcja.grupa || !lekcja.grupa)
 			? lekcja.zastepstwo.przedmiot
 			: lekcja.przedmiot;
 	if (przedmiot == "") return "";
@@ -372,7 +380,8 @@ function Plan({
 				tempData.getMonth() == lekcja.data.getMonth() &&
 				tempData.getFullYear() == lekcja.data.getFullYear() &&
 				z[0].klasa == oddzial &&
-				z[0].godzina == lekcja.godzina
+				z[0].godzina == lekcja.godzina &&
+				!lekcja.grupa
 			)
 				zast = z[0];
 		});
@@ -380,8 +389,8 @@ function Plan({
 	}
 
 	plan.forEach((lekcja) => {
-		if (lekcja == null || lekcja[0] == null || lekcja[0].grupa == "2/2")
-			return;
+		if (lekcja == null || lekcja[0] == null) return;
+		if (lekcja[0].grupa && lekcja[0].grupa != `${grupaZaw}/2`) return;
 
 		let placeholder = new Lekcja(
 			addDays(new Date(weekStart), lekcja[0].dzien),
@@ -429,8 +438,8 @@ function Plan({
 		let newDays: Lekcja[][] | undefined = [[], [], [], [], []];
 
 		plan.forEach((lekcja) => {
-			if (lekcja == null || lekcja[0] == null || lekcja[0].grupa == "2/2")
-				return;
+			if (lekcja == null || lekcja[0] == null) return;
+			if (lekcja[0].grupa && lekcja[0].grupa != `${grupaZaw}/2`) return;
 
 			let placeholder = new Lekcja(
 				addDays(new Date(weekStart), lekcja[0].dzien),
@@ -718,7 +727,6 @@ function Plan({
 						{daysMobile[getDayFromMonday(selectedDay.getDay())].map(
 							(lekcja: Lekcja, i) => {
 								if (lekcja.przedmiot == "") return;
-
 								lekcja.setDate(selectedDay);
 								const day =
 									days[
@@ -731,10 +739,21 @@ function Plan({
 								if (i == 4 || i == 5) classname += " dpn";
 								if (i == 5 || i == 6) classname += " dpp";
 								if (i == day.length) classname += " last-nb";
-								if (lekcja.zastepstwo?.zastepstwo)
-									classname += " zastepstwo";
-								else if (lekcja.zastepstwo)
-									classname += " odwolane";
+								if (
+									lekcja.grupa &&
+									lekcja.grupa.charAt(0) ==
+										lekcja.zastepstwo?.grupa
+								) {
+									if (lekcja.zastepstwo?.zastepstwo)
+										classname += " zastepstwo";
+									else if (lekcja.zastepstwo)
+										classname += " odwolane";
+								} else if (!lekcja.grupa) {
+									if (lekcja.zastepstwo?.zastepstwo)
+										classname += " zastepstwo";
+									else if (lekcja.zastepstwo)
+										classname += " odwolane";
+								}
 
 								if (loading)
 									return (
@@ -922,10 +941,21 @@ function Plan({
 								if (i == dzwonki.length)
 									classname += " last-nb";
 								else if (i == day.length) classname += " last";
-								if (lekcja.zastepstwo?.zastepstwo)
-									classname += " zastepstwo";
-								else if (lekcja.zastepstwo)
-									classname += " odwolane";
+								if (
+									lekcja.grupa &&
+									lekcja.grupa.charAt(0) ==
+										lekcja.zastepstwo?.grupa
+								) {
+									if (lekcja.zastepstwo?.zastepstwo)
+										classname += " zastepstwo";
+									else if (lekcja.zastepstwo)
+										classname += " odwolane";
+								} else if (!lekcja.grupa) {
+									if (lekcja.zastepstwo?.zastepstwo)
+										classname += " zastepstwo";
+									else if (lekcja.zastepstwo)
+										classname += " odwolane";
+								}
 
 								if (loading)
 									return (
